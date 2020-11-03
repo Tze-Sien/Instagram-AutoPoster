@@ -1,0 +1,19 @@
+{
+  "name": "nodejs-wondernica",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "jimp": "^0.16.1",
+    "node-fetch": "^2.6.1",
+    "path": "^0.12.7",
+    "request": "^2.88.2",
+    "tools-for-instagram": "^1.8.11"
+  }
+}

@@ -1,0 +1,7 @@
+accounts/
+cookies/
+db/
+node_modules/
+output/
+.env
+package-lock.json
