@@ -80,20 +80,20 @@ app.post('/postInstagram', async(req, res) =>{
             const url = generatedImage.data.url;
             const imageFetch = await fetch(url);
             const buffer = await imageFetch.buffer();
-            fs.writeFile(`./images/image.png`, buffer, () => console.log('finished downloading!'));
+            fs.writeFile(path.join(__dirname, "/images/image.png"), buffer, () => console.log('finished downloading!'));
 
             // 3.1 Convert file to JPG suitable for Instagram Upload
-            Jimp.read("./images/image.png", function (err, image) {
+            Jimp.read(path.join(__dirname, "/images/image.png"), function (err, image) {
             if (err) {
-            console.log(err)
+                console.log(err)
             } else {
-            image.write("./images/image.jpg")
+                image.write(path.join(__dirname, "/images/image.jpg"))
             }
         })
 
         // 4. Sign in to Instagram and Upload Picture
             let ig = await login(); 
-            let myPicturePath = path.join(__dirname, './images/image.jpg');;
+            let myPicturePath = path.join(__dirname, '/images/image.jpg');;
             let image = await uploadPicture(ig, headline, myPicturePath);   
 
         // 5. Delete the image 
