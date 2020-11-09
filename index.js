@@ -7,7 +7,6 @@ const axios = require('axios');
 const fs = require('fs');
 const Jimp = require("jimp");
 const bodyParser = require('body-parser');
-const converter = require('./smartudaraco2.js');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
