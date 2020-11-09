@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const tfi = require('tools-for-instagram');
+// const tfi = require('tools-for-instagram');
 const path = require('path');
 const fetch = require('node-fetch');
 const axios = require('axios');
