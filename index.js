@@ -102,7 +102,7 @@ app.post('/api/postInstagram', async(req, res) =>{
                 })
                 .then(() => console.log('The image was created successfully!'))
 
-                
+                return true;
             }
 
             if(payLoadContainer.count == 0){           // First Packet
@@ -126,6 +126,9 @@ app.post('/api/postInstagram', async(req, res) =>{
                         count: 0
                     };
                     payLoadContainer.count = 0;
+                    res.json({
+                        message:'Done Creating Image'
+                    });
                 }
 
             }else{                                      // Error Handling
