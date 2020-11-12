@@ -70,6 +70,7 @@ app.post('/api/postInstagram', async(req, res) =>{
                         throw new Error('Temperature-Humidity Sensor Trying to send packet before previous packet is published;');
                     }else{
                         payLoadContainer.tempHumSensor = data;
+                        console.log(payLoadContainer)
                         return true
                     }
                 }else if(payload.data[1] == 1){
@@ -77,11 +78,13 @@ app.post('/api/postInstagram', async(req, res) =>{
                         throw new Error('PM-CO2 Sensor Trying to send packet before previous packet is published');
                     }else{
                         payLoadContainer.pmCoSensor = data;
+                        console.log(payLoadContainer)
                         return true
                     }
                 }else{
                     throw new Error('Invalid Packet');
                 }
+                
             }
             
             // Async Function to generate image and post to instagram
@@ -118,7 +121,7 @@ app.post('/api/postInstagram', async(req, res) =>{
                 let accumulate = await payLoadAccumulator(req.body);
                 if(accumulate){
                     payLoadContainer.count++;
-                    console.log(payLoadContainer)
+                    
                     res.json(payLoadContainer);
                 }
 
