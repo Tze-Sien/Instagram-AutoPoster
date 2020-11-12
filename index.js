@@ -118,6 +118,7 @@ app.post('/api/postInstagram', async(req, res) =>{
                 let accumulate = await payLoadAccumulator(req.body);
                 if(accumulate){
                     payLoadContainer.count++;
+                    console.log(payLoadContainer)
                     res.json(payLoadContainer);
                 }
 
