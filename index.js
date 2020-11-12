@@ -93,16 +93,24 @@ app.post('/api/postInstagram', async(req, res) =>{
                 let pm10 = payload.pmCoSensor[1].value + payload.pmCoSensor[1].unit;
                 let co2 = payload.pmCoSensor[2].value + payload.pmCoSensor[2].unit;
                 
-                const nodeHtmlToImage = require('node-html-to-image')
+                console.log("Launching Browser")
+                puppeteer.launch().then(async browser => {
+                    const page = await browser.newPage();
+                    const url = 'https://www.chromestatus.com/features';
+                  
+                    page.on('response', async resp => {
+                      if (resp.ok && resp.url === url) {
+                        console.log(await resp.text());
+                      }
+                    });
+                  
+                    await page.goto(url);
+                  
+                    browser.close();
+                    return true;
+                });
 
-                nodeHtmlToImage({
-                output: './image.png',
-                html: '<html><body>Hello {{name}}!</body></html>',
-                content: { name: 'you' }
-                })
-                .then(() => console.log('The image was created successfully!'))
-
-                return true;
+                
             }
 
             if(payLoadContainer.count == 0){           // First Packet
