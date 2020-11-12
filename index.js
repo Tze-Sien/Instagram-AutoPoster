@@ -1,17 +1,13 @@
 const express = require('express');
 const app = express();
-// const tfi = require('tools-for-instagram');
 const path = require('path');
-const fetch = require('node-fetch');
 const fs = require('fs');
-const Jimp = require("jimp");
 const bodyParser = require('body-parser');
-const nodeHtmlToImage = require('node-html-to-image')
-const puppeteer = require('puppeteer')
+const htmlPdf = require('html-pdf');
 const converter = require('./smartudaraco2');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+require('tools-for-instagram');
 
 var payLoadContainer = {
     tempHumSensor:null,
@@ -96,24 +92,53 @@ app.post('/api/postInstagram', async(req, res) =>{
                 let pm10 = payload.pmCoSensor[1].value + payload.pmCoSensor[1].unit;
                 let co2 = payload.pmCoSensor[2].value + payload.pmCoSensor[2].unit;
                 
-                console.log("Launching Browser")
-                puppeteer.launch().then(async browser => {
-                    const page = await browser.newPage();
-                    const url = 'https://www.chromestatus.com/features';
-                  
-                    page.on('response', async resp => {
-                      if (resp.ok && resp.url === url) {
-                        console.log(await resp.text());
-                      }
-                    });
-                  
-                    await page.goto(url);
-                  
-                    browser.close();
-                    return true;
-                });
+                const htmlToPdfOptions = {
+                    "type":".jpg",
+                    "height":"650px",
+                    "width":"850px",
+                    "renderDelay": 2000,
+                }
 
-                
+                htmlContent = `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Document</title>
+                    <style>
+                        body{
+                            color: white;
+                            background-color: black;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h2>${temp}</h2>
+                    <h2>${humid}</h2>
+                    <h2>${pm25}</h2>
+                    <h2>${pm10}</h2>
+                    <h2>${co2}</h2>
+                </body>
+                </html>
+                `
+
+                htmlPdf.create(htmlContent,htmlToPdfOptions)
+                .toFile('./images/image.jpg', (err, result) => {
+                    if(err) return console.log(err)
+                    return result;
+                })
+
+                // 4. Sign in to Instagram and Upload Picture
+                let ig = await login(); 
+                let myPicturePath = path.join(__dirname, '/images/image.jpg');;
+                let image = await uploadPicture(ig, 'Weather Today', myPicturePath);   
+
+                // 5. Delete the image 
+                const pathToDir = path.join(__dirname, "/images")
+                await removeDir(pathToDir)
+
+                return true;
             }
 
             if(payLoadContainer.count == 0){           // First Packet
@@ -121,7 +146,6 @@ app.post('/api/postInstagram', async(req, res) =>{
                 let accumulate = await payLoadAccumulator(req.body);
                 if(accumulate){
                     payLoadContainer.count++;
-                    
                     res.json(payLoadContainer);
                 }
 
@@ -131,7 +155,6 @@ app.post('/api/postInstagram', async(req, res) =>{
                 let postInsta = await imagePosting(payLoadContainer);
                 if(postInsta){
                     payLoadContainer.count++;
-                    res.json(postInsta);
                     payLoadContainer = {
                         tempHumSensor:null,
                         pmCoSensor:null,
@@ -154,33 +177,6 @@ app.post('/api/postInstagram', async(req, res) =>{
                 throw new Error('Packets sent exceed 2 before posting to Instagram, Please try again!');
             }
 
-        
-
-        // // 3. Download Image to Local
-        //     const url = generatedImage.data.url;
-        //     const imageFetch = await fetch(url);
-        //     const buffer = await imageFetch.buffer();
-        //     fs.writeFile(path.join(__dirname, "/images/image.png"), buffer, () => console.log('finished downloading!'));
-
-        //     // 3.1 Convert file to JPG suitable for Instagram Upload
-        //     Jimp.read(path.join(__dirname, "/images/image.png"), function (err, image) {
-        //     if (err) {
-        //         console.log(err)
-        //     } else {
-        //         image.write(path.join(__dirname, "/images/image.jpg"))
-        //     }
-        // })
-
-        // // 4. Sign in to Instagram and Upload Picture
-        //     let ig = await login(); 
-        //     let myPicturePath = path.join(__dirname, '/images/image.jpg');;
-        //     let image = await uploadPicture(ig, headline, myPicturePath);   
-
-        // // 5. Delete the image 
-        //     const pathToDir = path.join(__dirname, "/images")
-        //     removeDir(pathToDir)
-        //     res.json({message: 'Image Uploaded!'})
-        
     }catch(error){
         res.status(400).json({
             error:error.message
