@@ -6,4 +6,3 @@ output/
 .env
 package-lock.json
 RESTMQTT.js
-smartudaraco2.js
