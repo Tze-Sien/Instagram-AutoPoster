@@ -196,11 +196,6 @@ app.post('/api/postInstagram', async(req, res) =>{
             }
 
     }catch(error){
-        payLoadContainer = {
-            tempHumSensor:null,
-            pmCoSensor:null,
-            count: 0
-        };
         res.status(400).json({
             error:error.message
         });
