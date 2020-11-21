@@ -86,11 +86,11 @@ app.post('/api/postInstagram', async(req, res) =>{
             // Async Function to generate image and post to instagram
             async function imagePosting(payload){
                 
-                let temp = payload.tempHumSensor[0].value + payload.tempHumSensor[0].unit;
-                let humid = payload.tempHumSensor[1].value + payload.tempHumSensor[1].unit;
-                let pm25 = payload.pmCoSensor[0].value + payload.pmCoSensor[0].unit
-                let pm10 = payload.pmCoSensor[1].value + payload.pmCoSensor[1].unit;
-                let co2 = payload.pmCoSensor[2].value + payload.pmCoSensor[2].unit;
+                let temp = payload.tempHumSensor[0].value 
+                let humid = payload.tempHumSensor[1].value 
+                let pm25 = payload.pmCoSensor[0].value 
+                let pm10 = payload.pmCoSensor[1].value
+                let co2 = payload.pmCoSensor[2].value
                 
                 const htmlToPdfOptions = {
                     "type":".jpg",
@@ -99,26 +99,51 @@ app.post('/api/postInstagram', async(req, res) =>{
                     "renderDelay": 2000,
                 }
 
+                let dateTimeNow = new Date()
+                let day = dateTimeNow.getDate();
+                let month = dateTimeNow.getMonth();
+                let year = dateTimeNow.getFullYear();
+                let hour = dateTimeNow.getHours();
+                let minutes = dateTimeNow.getMinutes();
+                const dateTime = `${day}-${month}-${year} | ${hour}:${minutes}`
+
                 htmlContent = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Document</title>
-                    <style>
-                        body{
-                            color: white;
-                            background-color: black;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h2>${temp}</h2>
-                    <h2>${humid}</h2>
-                    <h2>${pm25}</h2>
-                    <h2>${pm10}</h2>
-                    <h2>${co2}</h2>
+                <html style="height:1000px;width:1000px;margin:0;padding:0">
+                <body style="height:1000px;width:1000px;margin:0;padding:0">
+                    <div class="background" style="width:1000px; height:1000px;margin:0;padding:0;box-sizing:border-box;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
+                        <img src="${'file://' +__dirname + '/asset/background.png'}" style="width:1000px;height:1000px;position:absolute;z-index:0;margin:0;padding:0">
+                        
+                        <div class="upper" style="box-sizing:border-box;height:600px;width:1000px;padding-top:100px;padding-right:80px;padding-bottom:100px;padding-left:80px;position:relative;">
+                            
+                        <div class="date" style="box-sizing:border-box;color:white;height:50px;font-size:30px;text-align:right;margin-right:20px;">${dateTime}</div>
+                            
+                            <div class="upper-content" style="box-sizing:border-box;display:flex;align-items:center;margin-bottom:0px;">
+                                <img class="upper-content-img" src="${'file://' +__dirname + '/asset/temp.png'}" style="display:inline-block;width:100px;">
+                                <h1 class="upper-content-text" style="display:inline-block;color:white;font-size:80px;">${temp}&deg;C</h1>
+                            </div>
+                            
+                            <div class="upper-content" style="box-sizing:border-box;">
+                                <img class="upper-content-img" src="${'file://' +__dirname + '/asset/humid.png'}" style="display:inline-block;width:100px;">
+                                <h1 class="upper-content-text" style="color:white;font-size:80px;display:inline-block;">${humid}% RH</h1>
+                            </div>
+
+                        </div>
+
+                        <div class="lower" style="box-sizing:border-box;height:400px;width:1000px;padding-top:0px;padding-right:80px;padding-bottom:0px;padding-left:80px;position:relative;">
+                            <div class="lower-content" style="text-align:center;color:white;display:inline-block;width:250px;margin-right:25px;">
+                                <img class="lower-image" src="${'file://' +__dirname + '/asset/pm25.png'}" style="height:200px;"><br>
+                                <span style="font-size:30px;font-weight:500;">${pm25}ug/m <sup>3</sup></span>
+                            </div>
+                            <div class="lower-content" style="text-align:center;color:white;display:inline-block;width:250px;margin-right:25px;">
+                                <img class="lower-image" src="${'file://' +__dirname + '/asset/pm10.png'}" style="height:200px;"><br>
+                                <span style="font-size:30px;font-weight:500;">${pm10}ug/m<sup>3</sup></span>
+                            </div>
+                            <div class="lower-content" style="text-align:center;color:white;display:inline-block;width:250px;">
+                                <img class="lower-image" src="${'file://' +__dirname + '/asset/co2.png'}" style="height:200px;"><br>
+                                <span style="font-size:30px;font-weight:500;">${co2}ppm</span>
+                            </div>
+                        </div>
+                    </div>
                 </body>
                 </html>
                 `
