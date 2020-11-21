@@ -167,12 +167,10 @@ app.post('/api/postInstagram', async(req, res) =>{
 
             if(payLoadContainer.count == 0){           // First Packet
                 
-                let accumulate = await payLoadAccumulator(req.body);
-                if(accumulate){
-                    payLoadContainer.count++;
-                    res.json(payLoadContainer);
-                }
-                break;
+                await payLoadAccumulator(req.body);
+                payLoadContainer.count++;
+                res.json(payLoadContainer);
+
             }else if(payLoadContainer.count == 1){     // Second Packet (Publish Instagram Post here)
                 
                 let accumulate = await payLoadAccumulator(req.body);
