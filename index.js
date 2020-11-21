@@ -15,6 +15,12 @@ var payLoadContainer = {
     count: 0
 };
 
+app.get('/api/postInstagram', (req, res) => {
+    res.json({
+        message:"bye"
+    })
+})
+
 app.post('/api/postInstagram', async(req, res) =>{
     
     try {
@@ -166,7 +172,7 @@ app.post('/api/postInstagram', async(req, res) =>{
                     payLoadContainer.count++;
                     res.json(payLoadContainer);
                 }
-
+                break;
             }else if(payLoadContainer.count == 1){     // Second Packet (Publish Instagram Post here)
                 
                 let accumulate = await payLoadAccumulator(req.body);
