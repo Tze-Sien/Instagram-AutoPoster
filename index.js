@@ -40,20 +40,6 @@ app.post('/api/postInstagram', async(req, res) =>{
                 console.log("Directory path not found.")
                 }
             }
-            
-            // 0.2 Converting UNIX to normal Time Stamp
-            function timeConverter(UNIX_timestamp){
-                let a = new Date(UNIX_timestamp * 1000);
-                let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                let year = a.getFullYear();
-                let month = months[a.getMonth()];
-                let date = a.getDate();
-                let hour = a.getHours();
-                let min = a.getMinutes();
-                let sec = a.getSeconds();
-                let time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
-                return time;
-            }
 
         // 1. Data Extraction from Request Body 
             
@@ -77,7 +63,14 @@ app.post('/api/postInstagram', async(req, res) =>{
                         console.log(payLoadContainer)
                         return true
                     }
-                }else{
+                }else if(payload = {}){
+                    payLoadContainer  = {
+                        tempHumSensor:null,
+                        pmCoSensor:null,
+                        count: 0
+                    };  
+                }
+                else{
                     throw new Error('Invalid Packet');
                 }
                 
@@ -203,6 +196,11 @@ app.post('/api/postInstagram', async(req, res) =>{
             }
 
     }catch(error){
+        payLoadContainer = {
+            tempHumSensor:null,
+            pmCoSensor:null,
+            count: 0
+        };
         res.status(400).json({
             error:error.message
         });
